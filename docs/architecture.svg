@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 300" width="1040" height="300" font-family="Helvetica, Arial, sans-serif">
+  <title>RISC-V 5-stage pipeline architecture</title>
+  <desc>IF, ID, EX, MEM, WB stages in sequence. EX/MEM and MEM/WB results forward back into EX. Hazard stall and branch/JALR flush signals, both generated in EX, feed back into IF.</desc>
+
+  <defs>
+    <marker id="arrowDark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#24292f"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#0969da"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#cf222e"/>
+    </marker>
+  </defs>
+
+  <!-- explicit white canvas: does not depend on viewer theme -->
+  <rect x="0" y="0" width="1040" height="300" fill="#ffffff"/>
+
+  <!-- pipeline flow (IF -> ID -> EX -> MEM -> WB) -->
+  <line x1="190" y1="90" x2="248" y2="90" stroke="#24292f" stroke-width="2" marker-end="url(#arrowDark)"/>
+  <line x1="400" y1="90" x2="458" y2="90" stroke="#24292f" stroke-width="2" marker-end="url(#arrowDark)"/>
+  <line x1="610" y1="90" x2="668" y2="90" stroke="#24292f" stroke-width="2" marker-end="url(#arrowDark)"/>
+  <line x1="820" y1="90" x2="878" y2="90" stroke="#24292f" stroke-width="2" marker-end="url(#arrowDark)"/>
+
+  <!-- feedback: EX/MEM forward (MEM -> EX) -->
+  <polyline points="745,140 745,190 547,190 547,142" fill="none" stroke="#0969da" stroke-width="1.75" stroke-dasharray="6,4" marker-end="url(#arrowBlue)"/>
+  <text x="645" y="184" text-anchor="middle" font-size="12" fill="#0969da">EX/MEM forward</text>
+
+  <!-- feedback: MEM/WB forward (WB -> EX) -->
+  <polyline points="955,140 955,225 523,225 523,142" fill="none" stroke="#0969da" stroke-width="1.75" stroke-dasharray="6,4" marker-end="url(#arrowBlue)"/>
+  <text x="750" y="219" text-anchor="middle" font-size="12" fill="#0969da">MEM/WB forward</text>
+
+  <!-- feedback: stall / flush (EX -> IF) -->
+  <polyline points="535,140 535,260 115,260 115,142" fill="none" stroke="#cf222e" stroke-width="1.75" stroke-dasharray="6,4" marker-end="url(#arrowRed)"/>
+  <text x="325" y="254" text-anchor="middle" font-size="12" fill="#cf222e">stall / flush</text>
+
+  <!-- IF -->
+  <text x="115" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#1a1a1a">IF</text>
+  <rect x="40" y="40" width="150" height="100" rx="10" fill="#f6f8fa" stroke="#24292f" stroke-width="1.5"/>
+  <text x="115" text-anchor="middle" font-size="13" fill="#1a1a1a">
+    <tspan x="115" y="82.5">imem</tspan>
+    <tspan x="115" y="97.5">(BRAM)</tspan>
+  </text>
+
+  <!-- ID -->
+  <text x="325" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#1a1a1a">ID</text>
+  <rect x="250" y="40" width="150" height="100" rx="10" fill="#f6f8fa" stroke="#24292f" stroke-width="1.5"/>
+  <text x="325" text-anchor="middle" font-size="13" fill="#1a1a1a">
+    <tspan x="325" y="75">decode +</tspan>
+    <tspan x="325" y="90">regfile</tspan>
+    <tspan x="325" y="105">read</tspan>
+  </text>
+
+  <!-- EX -->
+  <text x="535" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#1a1a1a">EX</text>
+  <rect x="460" y="40" width="150" height="100" rx="10" fill="#f6f8fa" stroke="#24292f" stroke-width="1.5"/>
+  <text x="535" text-anchor="middle" font-size="13" fill="#1a1a1a">
+    <tspan x="535" y="67.5">ALU /</tspan>
+    <tspan x="535" y="82.5">branch</tspan>
+    <tspan x="535" y="97.5">resolve /</tspan>
+    <tspan x="535" y="112.5">QDOT mul</tspan>
+  </text>
+
+  <!-- MEM -->
+  <text x="745" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#1a1a1a">MEM</text>
+  <rect x="670" y="40" width="150" height="100" rx="10" fill="#f6f8fa" stroke="#24292f" stroke-width="1.5"/>
+  <text x="745" text-anchor="middle" font-size="13" fill="#1a1a1a">
+    <tspan x="745" y="67.5">dmem access</tspan>
+    <tspan x="745" y="82.5">QDOT adder-</tspan>
+    <tspan x="745" y="97.5">tree +</tspan>
+    <tspan x="745" y="112.5">accumulate</tspan>
+  </text>
+
+  <!-- WB -->
+  <text x="955" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#1a1a1a">WB</text>
+  <rect x="880" y="40" width="150" height="100" rx="10" fill="#f6f8fa" stroke="#24292f" stroke-width="1.5"/>
+  <text x="955" text-anchor="middle" font-size="13" fill="#1a1a1a">
+    <tspan x="955" y="67.5">regfile</tspan>
+    <tspan x="955" y="82.5">write</tspan>
+    <tspan x="955" y="97.5">(write-</tspan>
+    <tspan x="955" y="112.5">through)</tspan>
+  </text>
+</svg>

@@ -104,45 +104,15 @@ RISC-V/
 │   ├── synth.tcl              Vivado batch-mode synthesis + implementation script
 │   ├── query_bram.tcl         Post-implementation BRAM-mapping check
 │   └── tb_uart.v, tb_fpga_top.v  UART loopback test and end-to-end UART demo test
-├── LICENSE, README.md, CHANGELOG.md, CONTRIBUTING.md, .gitignore
+├── scripts/run_tests.sh       Compiles + runs every testbench; used by CI and locally
+├── .github/workflows/ci.yml   GitHub Actions: runs scripts/run_tests.sh on push/PR
+├── docs/architecture.svg      Pipeline diagram embedded in this README
+├── LICENSE, README.md, CHANGELOG.md, CONTRIBUTING.md, .gitignore, .gitattributes
 ```
 
 ## Architecture
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'background': '#ffffff', 'primaryColor': '#f6f8fa', 'primaryBorderColor': '#24292f', 'primaryTextColor': '#1a1a1a', 'textColor': '#1a1a1a', 'titleColor': '#1a1a1a', 'lineColor': '#24292f', 'fontFamily': 'Helvetica, Arial, sans-serif'}}}%%
-flowchart LR
-    subgraph IF [IF]
-        n1(["imem<br/>(BRAM)"])
-    end
-    subgraph ID [ID]
-        n2(["decode +<br/>regfile<br/>read"])
-    end
-    subgraph EX [EX]
-        n3(["ALU /<br/>branch<br/>resolve /<br/>QDOT mul"])
-    end
-    subgraph MEM [MEM]
-        n4(["dmem access<br/>QDOT adder-<br/>tree +<br/>accumulate"])
-    end
-    subgraph WB [WB]
-        n5(["regfile<br/>write<br/>(write-<br/>through)"])
-    end
-
-    n1 --> n2 --> n3 --> n4 --> n5
-    n4 -. "EX/MEM forward" .-> n3
-    n5 -. "MEM/WB forward" .-> n3
-    n3 -. "stall / flush" .-> n1
-
-    style IF fill:none,stroke:none
-    style ID fill:none,stroke:none
-    style EX fill:none,stroke:none
-    style MEM fill:none,stroke:none
-    style WB fill:none,stroke:none
-
-    linkStyle 4 stroke:#0969da,color:#0969da
-    linkStyle 5 stroke:#0969da,color:#0969da
-    linkStyle 6 stroke:#cf222e,color:#cf222e
-```
+![RISC-V 5-stage pipeline: IF, ID, EX, MEM, WB in sequence, with EX/MEM and MEM/WB forwarding into EX, and a stall/flush signal from EX back into IF](docs/architecture.svg)
 
 - **Forwarding**: EX/MEM and MEM/WB results are forwarded back into EX for
   `rs1`, `rs2`, `rd`-as-source (QDOT accumulate input), and the QDOT8
