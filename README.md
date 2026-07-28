@@ -109,16 +109,16 @@ RISC-V/
 
 ## Architecture
 
-```
-        IF            ID            EX             MEM            WB
-   ┌─────────┐   ┌──────────┐  ┌──────────┐   ┌──────────────┐  ┌────────┐
-   │  imem    │──▶│ decode + │─▶│  ALU /   │──▶│ dmem access / │─▶│ regfile │
-   │ (BRAM)   │   │ regfile  │  │ branch   │   │ QDOT adder-   │  │ write   │
-   │          │   │  read    │  │ resolve /│   │ tree +        │  │ (write- │
-   │          │   │          │  │ QDOT mul │   │ accumulate    │  │ through)│
-   └─────────┘   └──────────┘  └──────────┘   └──────────────┘  └────────┘
-        ▲                            │                │
-        └── stall / flush ───────────┴── forwarding ──┘
+```mermaid
+flowchart LR
+    IF["IF<br/>imem fetch (BRAM)"] --> ID["ID<br/>decode + regfile read"]
+    ID --> EX["EX<br/>ALU / branch resolve / QDOT multiply"]
+    EX --> MEM["MEM<br/>dmem access / QDOT adder-tree + accumulate"]
+    MEM --> WB["WB<br/>regfile write (write-through)"]
+
+    MEM -. "EX/MEM forward" .-> EX
+    WB -. "MEM/WB forward" .-> EX
+    EX -. "stall / flush" .-> IF
 ```
 
 - **Forwarding**: EX/MEM and MEM/WB results are forwarded back into EX for
