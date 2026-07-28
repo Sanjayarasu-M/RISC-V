@@ -128,8 +128,9 @@ flowchart LR
     end
 
     n1 --> n2 --> n3 --> n4 --> n5
-    n4 -. forwarding .-> n2
-    n4 -. "stall / flush" .-> n1
+    n4 -. "EX/MEM forward" .-> n3
+    n5 -. "MEM/WB forward" .-> n3
+    n3 -. "stall / flush" .-> n1
 
     style IF fill:none,stroke:none
     style ID fill:none,stroke:none
@@ -138,7 +139,8 @@ flowchart LR
     style WB fill:none,stroke:none
 
     linkStyle 4 stroke:#2c5f8a,color:#2c5f8a
-    linkStyle 5 stroke:#c0392b,color:#c0392b
+    linkStyle 5 stroke:#2c5f8a,color:#2c5f8a
+    linkStyle 6 stroke:#c0392b,color:#c0392b
 ```
 
 - **Forwarding**: EX/MEM and MEM/WB results are forwarded back into EX for
