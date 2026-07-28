@@ -111,14 +111,34 @@ RISC-V/
 
 ```mermaid
 flowchart LR
-    IF["IF<br/>imem fetch (BRAM)"] --> ID["ID<br/>decode + regfile read"]
-    ID --> EX["EX<br/>ALU / branch resolve / QDOT multiply"]
-    EX --> MEM["MEM<br/>dmem access / QDOT adder-tree + accumulate"]
-    MEM --> WB["WB<br/>regfile write (write-through)"]
+    subgraph IF [IF]
+        n1(["imem<br/>(BRAM)"])
+    end
+    subgraph ID [ID]
+        n2(["decode +<br/>regfile<br/>read"])
+    end
+    subgraph EX [EX]
+        n3(["ALU /<br/>branch<br/>resolve /<br/>QDOT mul"])
+    end
+    subgraph MEM [MEM]
+        n4(["dmem access<br/>QDOT adder-<br/>tree +<br/>accumulate"])
+    end
+    subgraph WB [WB]
+        n5(["regfile<br/>write<br/>(write-<br/>through)"])
+    end
 
-    MEM -. "EX/MEM forward" .-> EX
-    WB -. "MEM/WB forward" .-> EX
-    EX -. "stall / flush" .-> IF
+    n1 --> n2 --> n3 --> n4 --> n5
+    n4 -. forwarding .-> n2
+    n4 -. "stall / flush" .-> n1
+
+    style IF fill:none,stroke:none
+    style ID fill:none,stroke:none
+    style EX fill:none,stroke:none
+    style MEM fill:none,stroke:none
+    style WB fill:none,stroke:none
+
+    linkStyle 4 stroke:#2c5f8a,color:#2c5f8a
+    linkStyle 5 stroke:#c0392b,color:#c0392b
 ```
 
 - **Forwarding**: EX/MEM and MEM/WB results are forwarded back into EX for
