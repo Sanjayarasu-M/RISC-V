@@ -36,13 +36,15 @@ this was last verified against.
      behavior the test is exercising, and inline comments showing expected
      register/memory values.
    - Everything else: match the surrounding file.
-4. **Run the full test suite before opening a PR** — every testbench in
-   `tests/`, `sw/`, and `fpga/` (see the README's
-   [Building and running the tests](README.md#building-and-running-the-tests)
-   section for exact commands) must still print `PASS`. If you're adding a
-   new instruction, hazard case, or peripheral, add a new self-checking
-   testbench for it in the relevant directory rather than only testing
-   manually.
+4. **Run the full test suite before opening a PR**: `./scripts/run_tests.sh`
+   (the same script [CI](.github/workflows/ci.yml) runs on every push and
+   PR) must exit 0. It compiles and runs every testbench in `tests/`, `sw/`,
+   and `fpga/` and fails if any of them prints `FAIL` or produces no `PASS`
+   output. If you're adding a new instruction, hazard case, or peripheral,
+   add a new self-checking testbench for it in the relevant directory
+   rather than only testing manually. Note that CI does not run FPGA
+   synthesis (Vivado isn't available there) — if you touch `fpga/synth.tcl`
+   or `fpga/constraints.xdc`, run that flow locally yourself.
 5. If your change affects behavior described in the README (ISA coverage,
    known limitations, benchmark numbers), update the README in the same PR.
    Don't restate invented numbers — if you're changing something that

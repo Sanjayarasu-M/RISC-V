@@ -1,5 +1,7 @@
 # RISC-V — Pipelined RV32I Core with a Custom INT8 Dot-Product Extension
 
+[![CI](https://github.com/Sanjayarasu-M/RISC-V/actions/workflows/ci.yml/badge.svg)](https://github.com/Sanjayarasu-M/RISC-V/actions/workflows/ci.yml)
+
 A from-scratch RISC-V CPU in Verilog: a 5-stage pipelined RV32I core with full
 data forwarding and hazard handling, extended with two custom instructions
 (`QDOT4` / `QDOT8`) that accelerate signed int8 dot products — the operation
@@ -190,6 +192,17 @@ from the repository root, since a few default memory-image paths
 
 Every command below was run against this exact repository state and its
 output is reproduced verbatim in [Verified results](#verified-results).
+`./scripts/run_tests.sh` runs all of them in sequence and exits non-zero if
+any test prints `FAIL` or produces no `PASS` output — it's what
+[CI](.github/workflows/ci.yml) runs on every push and pull request, and the
+fastest way to reproduce the full suite locally:
+
+```sh
+./scripts/run_tests.sh
+```
+
+The individual commands below are the same thing broken out per test, useful
+when you're debugging one specific testbench.
 
 **Flagship smoke test** (hand-assembled `QDOT4` program, `program.hex`):
 

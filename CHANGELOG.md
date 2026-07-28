@@ -10,6 +10,21 @@ only for the release itself.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- `scripts/run_tests.sh`: compiles and runs every testbench in the
+  repository with Icarus Verilog, failing if any prints `FAIL` or produces
+  no `PASS` output. Mirrors the exact commands in the README's
+  [Building and running the tests](README.md#building-and-running-the-tests)
+  section, so local runs and CI can't drift apart.
+- `.github/workflows/ci.yml`: runs `scripts/run_tests.sh` on every push and
+  pull request to `main` (Ubuntu, Icarus Verilog installed via `apt-get`).
+  Does not run FPGA synthesis — Vivado is not available in GitHub-hosted
+  runners, so that flow stays a manual, local step (see
+  [FPGA synthesis](README.md#fpga-synthesis)).
+
 ## [1.0.0] - 2026-07-28
 
 Initial public release. Development had proceeded through the following
