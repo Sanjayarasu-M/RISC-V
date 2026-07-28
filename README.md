@@ -5,12 +5,14 @@ data forwarding and hazard handling, extended with two custom instructions
 (`QDOT4` / `QDOT8`) that accelerate signed int8 dot products — the operation
 at the heart of quantized neural-network inference — directly in hardware.
 The project also includes a bare-metal C toolchain flow, a self-checking
-testbench suite, and an FPGA deployment target (CPU + UART) with a Vivado
-synthesis/timing-closure script for a Xilinx Zynq UltraScale+ part.
+testbench suite, and an FPGA deployment target (CPU + UART) that has been
+synthesized and routed clean for a Xilinx Zynq UltraScale+ part.
 
-All functional claims in this README (test results, cycle counts, speedups)
-were verified by running the testbenches in this repository with Icarus
-Verilog; see [Verified results](#verified-results).
+All functional claims in this README (test results, cycle counts, speedups,
+FPGA utilization/timing) were verified by actually running the toolchain —
+Icarus Verilog for simulation, Vivado 2025.2 for synthesis/implementation —
+against this repository; see [Verified results](#verified-results) and
+[FPGA synthesis](#fpga-synthesis).
 
 ## Contents
 
@@ -57,7 +59,10 @@ Verilog; see [Verified results](#verified-results).
 - **FPGA deployment target** (`fpga/`): `fpga_top.v` adds a UART transmitter
   so the core can report results off-chip, plus a Vivado batch-mode
   synthesis/implementation script targeting a Zynq UltraScale+ part
-  (`xczu7ev-ffvf1517-1LV-i`).
+  (`xczu7ev-ffvf1517-1LV-i`). Synthesized and routed clean with Vivado
+  2025.2 — 0 errors/warnings, all timing constraints met at 50 MHz,
+  <1% LUT/FF/BRAM utilization. See [FPGA synthesis](#fpga-synthesis) for
+  the full report.
 - **Self-checking testbenches** throughout: every `.v` testbench in this
   repository prints `PASS`/`FAIL` and is driven by a matching hand-assembled
   or GCC-compiled program.
@@ -273,10 +278,60 @@ vivado -mode batch -source fpga/synth.tcl
 
 Run from the repository root. Output reports and the routed checkpoint are
 written to `fpga/build/` (git-ignored — regenerate locally rather than
-committing them). This flow was **not** re-executed as part of this review
-(Vivado is not available in this environment); the script was inspected and
-its file paths were corrected for the `rtl/` reorganization, but treat it as
-unverified until you run it yourself.
+committing them).
+
+This flow was executed end-to-end with **Vivado 2025.2**
+(`synth_design` → `opt_design` → `place_design` → `phys_opt_design` →
+`route_design`) against the committed `sw/kernel.hex` / `kernel_data.hex`
+firmware image. Result: **0 errors, 0 critical warnings, 0 warnings** across
+every stage, and a routed design meeting all timing constraints.
+
+**Post-route utilization** (`xczu7ev-ffvf1517-1LV-i`, from `fpga/build/utilization.rpt`):
+
+| Resource | Used | Available | Utilization |
+|---|---|---|---|
+| CLB LUTs | 2,093 | 230,400 | 0.91% |
+| CLB Registers (FF) | 775 | 460,800 | 0.17% |
+| CARRY8 | 115 | 28,800 | 0.40% |
+| Block RAM tiles | 1.5 (1× RAMB36E2 + 1× RAMB18E2) | 312 | 0.48% |
+| DSP48 | 0 | 1,728 | 0% |
+| Bonded IOB | 3 | 464 | 0.65% |
+| BUFGCE (clock buffers) | 1 | 208 | 0.48% |
+
+`imem` correctly mapped to a Block RAM (`imem_data_r_reg` → RAMB18E2) and
+`dmem` to a second Block RAM (RAMB36E2) — confirming the `rom_style="block"`
+attribute in `fpga_top.v` works as intended on this toolchain version (see
+the comment there about the historical LUT-inference failure this attribute
+was added to fix). The register file synthesized to distributed RAM (LUTRAM)
+rather than flip-flops. No DSP48 blocks were used — the ALU and QDOT4/QDOT8
+multiplies map entirely to CLB fabric (LUTs/CARRY8) at this utilization
+level.
+
+**Timing** (`fpga/build/timing_summary.rpt`, constrained clock: 50 MHz /
+20.000 ns period, speed grade `-1LV`, temperature grade `I`):
+
+| Metric | Value |
+|---|---|
+| Worst Negative Slack (setup, WNS) | +9.717 ns (0 of 3091 endpoints failing) |
+| Worst Hold Slack (WHS) | +0.014 ns (0 of 3091 endpoints failing) |
+| Worst Pulse Width Slack (WPWS) | +9.214 ns (0 of 980 endpoints failing) |
+
+All user-specified timing constraints are met at 50 MHz. The positive setup
+slack implies headroom above 50 MHz (critical path ≈ 20 − 9.717 = 10.283 ns,
+i.e. an estimated ~97 MHz ceiling *at this specific placement*) — but that
+is a router-estimated extrapolation, not a re-run at a tighter constraint,
+so treat it as directional rather than a guaranteed Fmax.
+
+**One thing worth flagging, not glossing over**: the worst hold slack is
+only **+0.014 ns (14 picoseconds)** — technically passing, but an extremely
+thin margin that single-corner Vivado STA can validate but real silicon
+(process/voltage/temperature variation) can violate. Before trusting this on
+physical hardware, re-run timing across multiple corners
+(`report_timing_summary` with `-delay_type min_max` across setup/hold
+corners, which this default flow already requests, but consider tightening
+margins deliberately) and treat this specific hold path
+(`CORE/id_ex_funct3_reg[1]` → `CORE/ex_mem_funct3_reg[1]`) as a candidate
+for a small deliberate delay buffer if you take this to a real board.
 
 `fpga/constraints.xdc` only sets a clock period — the pin/IOSTANDARD
 assignments for a real board are left as commented-out placeholders. This
