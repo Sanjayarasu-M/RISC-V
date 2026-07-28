@@ -24,6 +24,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   Does not run FPGA synthesis — Vivado is not available in GitHub-hosted
   runners, so that flow stays a manual, local step (see
   [FPGA synthesis](README.md#fpga-synthesis)).
+- README badges: CI status, a dynamic license badge (queries GitHub's own
+  license detection, confirmed MIT via the API), and a static testbench
+  count (currently 11, counted from `tb_*.v`; see CONTRIBUTING.md for the
+  process to keep it from drifting as tests are added).
+- `docs/architecture.svg`: a hand-authored pipeline diagram for the
+  Architecture section, replacing the original ASCII box-drawing diagram.
+  Went through a live Mermaid diagram first, but GitHub's dark-mode theming
+  rendered it on an unreadable black background even after explicit
+  `%%{init}%%` theme overrides; switched to a static SVG with an explicit
+  white background rectangle baked into the file, which does not depend on
+  any renderer's theme handling. Diagram content was also corrected against
+  `rtl/cpu_core.v` along the way: forwarding (`ex_mem_fwd_valid` /
+  `mem_wb_fwd_valid`, lines 433–434) and the stall/flush signals
+  (`hazard_stall` line 377, `flush_ex` line 499) all originate at/around
+  EX, not MEM as an early draft showed.
 
 ## [1.0.0] - 2026-07-28
 
