@@ -1,0 +1,15 @@
+# Normalize all text files to LF in the repository, regardless of the
+# checkout platform's line-ending conventions.
+* text=auto eol=lf
+
+*.hex text eol=lf
+*.v   text eol=lf
+*.S   text eol=lf
+*.s   text eol=lf
+*.c   text eol=lf
+*.h   text eol=lf
+*.ld  text eol=lf
+*.py  text eol=lf
+*.tcl text eol=lf
+*.xdc text eol=lf
+*.md  text eol=lf

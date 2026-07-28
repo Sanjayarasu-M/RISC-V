@@ -1,0 +1,33 @@
+# --- Icarus Verilog / simulation ---
+*.vvp
+*.vcd
+*.fst
+*.lxt*
+
+# --- RISC-V GCC toolchain intermediates ---
+# (sw/kernel.hex and sw/kernel_data.hex are committed pre-built simulation
+# inputs -- see sw/README or the main README's "Rebuilding the firmware
+# image" section. Only the intermediate object/link artifacts are ignored.)
+*.o
+*.elf
+*.map
+
+# --- Xilinx Vivado ---
+.Xil/
+fpga/build/
+*.jou
+*.log
+*.str
+webtalk*.log
+webtalk*.jou
+vivado*.backup.jou
+vivado_*.tcl
+usage_statistics_webtalk.html
+.hbs/
+
+# --- OS / editor cruft ---
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
