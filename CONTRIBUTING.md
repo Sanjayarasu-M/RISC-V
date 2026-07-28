@@ -42,9 +42,13 @@ this was last verified against.
    and `fpga/` and fails if any of them prints `FAIL` or produces no `PASS`
    output. If you're adding a new instruction, hazard case, or peripheral,
    add a new self-checking testbench for it in the relevant directory
-   rather than only testing manually. Note that CI does not run FPGA
-   synthesis (Vivado isn't available there) — if you touch `fpga/synth.tcl`
-   or `fpga/constraints.xdc`, run that flow locally yourself.
+   rather than only testing manually — and update both the loop in
+   `scripts/run_tests.sh` and the testbench count in the README's `Tests`
+   badge (`find . -name "tb_*.v" -not -path "./.git/*" | wc -l` will give
+   you the current count) so neither silently goes stale. Note that CI
+   does not run FPGA synthesis (Vivado isn't available there) — if you
+   touch `fpga/synth.tcl` or `fpga/constraints.xdc`, run that flow locally
+   yourself.
 5. If your change affects behavior described in the README (ISA coverage,
    known limitations, benchmark numbers), update the README in the same PR.
    Don't restate invented numbers — if you're changing something that

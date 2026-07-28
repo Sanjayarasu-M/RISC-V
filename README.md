@@ -1,6 +1,8 @@
 # RISC-V — Pipelined RV32I Core with a Custom INT8 Dot-Product Extension
 
 [![CI](https://github.com/Sanjayarasu-M/RISC-V/actions/workflows/ci.yml/badge.svg)](https://github.com/Sanjayarasu-M/RISC-V/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/Sanjayarasu-M/RISC-V)](LICENSE)
+[![Tests](https://img.shields.io/badge/testbenches-11%20passing-brightgreen)](scripts/run_tests.sh)
 
 A from-scratch RISC-V CPU in Verilog: a 5-stage pipelined RV32I core with full
 data forwarding and hazard handling, extended with two custom instructions
