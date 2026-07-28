@@ -33,7 +33,10 @@ internal milestones, all present in this snapshot:
   TX), a UART transmitter/receiver pair, a Vivado batch-mode synthesis and
   timing-closure script targeting a Zynq UltraScale+ part, and an
   end-to-end simulation test that decodes the UART bitstream to confirm
-  correct output.
+  correct output. The simulation test is verified passing; the Vivado
+  synthesis/timing-closure script itself has not been executed or verified
+  in this repository's history (no Vivado install available) — see the
+  README's [FPGA synthesis](README.md#fpga-synthesis) section.
 - **`QDOT8` extension**: widens the dot-product instruction to 8 signed
   int8 lanes via a register-pair operand trick (`rs1+1`/`rs2+1`), sharing
   the custom-0 opcode and pipeline treatment with `QDOT4`. Added dedicated
