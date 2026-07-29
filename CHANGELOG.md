@@ -39,6 +39,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   `mem_wb_fwd_valid`, lines 433–434) and the stall/flush signals
   (`hazard_stall` line 377, `flush_ex` line 499) all originate at/around
   EX, not MEM as an early draft showed.
+- `CODE_OF_CONDUCT.md` and `SECURITY.md`, linked from the README's
+  Contributing section.
+- `assets/social-preview.png`: a 1280x640 card for the repo's social
+  preview setting (title, one-line summary, and headline stats — QDOT8
+  speedup, LUT utilization, worst hold slack). GitHub has no API for the
+  social preview setting itself, so the image is committed here for
+  reference/manual upload rather than applied automatically.
+
+### Fixed
+
+- `.gitignore`: removed a stale comment referencing `sw/README`, a file
+  that was never added to the repository.
 
 ## [1.0.0] - 2026-07-28
 

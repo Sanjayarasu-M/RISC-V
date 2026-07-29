@@ -404,7 +404,9 @@ QDOT8 extension) as recorded in the source history.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Participation is governed by the
+[Code of Conduct](CODE_OF_CONDUCT.md); to report a security issue rather
+than a regular bug, see [SECURITY.md](SECURITY.md).
 
 ## License
 

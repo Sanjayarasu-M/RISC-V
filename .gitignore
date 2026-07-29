@@ -6,8 +6,8 @@
 
 # --- RISC-V GCC toolchain intermediates ---
 # (sw/kernel.hex and sw/kernel_data.hex are committed pre-built simulation
-# inputs -- see sw/README or the main README's "Rebuilding the firmware
-# image" section. Only the intermediate object/link artifacts are ignored.)
+# inputs -- see the main README's "Rebuilding the firmware image" section.
+# Only the intermediate object/link artifacts are ignored.)
 *.o
 *.elf
 *.map
